@@ -1,0 +1,35 @@
+version: "3"
+services:
+  spark-submit:
+    image: $IMAGE_NAME_SUBMIT
+    hostname: spark-submit
+    # build: .
+    environment:
+        - SPARK_MASTER=spark://spark-master-local:7077
+        - SPARK_LOCAL_HOSTNAME=spark-submit
+        - SPARK_PUBLIC_DNS=spark-submit
+        - SPARK_WORKER_WEBUI_PORT=4040
+        - SPARK_WORKER_CORES=1
+        - SPARK_MODE=submit
+        - SPARK_WORKER_MEMORY=1G
+        - SPARK_DRIVER_MEMORY=1G
+        - SPARK_EXECUTOR_MEMORY=1G
+        - SPARK_WORKLOAD=submit
+    volumes:
+        - ./apps:/opt/spark-apps
+        - ./data:/opt/spark-data
+        - ./hudi_test:/opt/hudi_test
+    # command: /usr/local/bin/watch_and_submit.sh
+    ports:
+      - "4040:4040"
+      - "8888:8888"
+      - "18080:18080"
+      - "8889:8889"
+      - "10000:10000"
+      - "10001:10001"
+      - "9083:9083"
+# networks:
+#   spark-cluster_public:
+#     driver: overlay
+#     external: true
+

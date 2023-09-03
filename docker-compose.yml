@@ -1,0 +1,192 @@
+version: "3.9"
+services:
+  spark-master:
+    image: spark
+    hostname: spark-master-local
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    networks:
+      - default
+      - spark-cluster_public_2
+    volumes:
+       - ./apps:/opt/spark-apps
+       - ./data:/opt/spark-data
+      #  - ./hudi_test:/opt/hudi_test
+    deploy:
+      placement:
+        constraints:
+          - node.labels.pci_ssd==true
+    environment:
+      # - SPARK_LOCAL_IP=spark-master
+      - SPARK_LOCAL_HOSTNAME=spark-master-local
+      # - SPARK_PUBLIC_DNS=spark-master
+      - SPARK_WORKLOAD=master
+      - SPARK_MASTER_PORT=7077
+      - SPARK_MASTER_WEBUI_PORT=8080
+      - SPARK_MODE=master
+  spark-worker-a:
+    image: spark
+    hostname: spark-worker-a
+    ports:
+      - "9091:9091"
+      - "7000:7000"
+    depends_on:
+      - spark-master
+    deploy:
+      placement:
+        constraints:
+          - node.labels.worker1==true
+    environment:
+      - SPARK_MASTER=spark://spark-master-local:7077
+      - SPARK_LOCAL_HOSTNAME=spark-worker-a
+      - SPARK_WORKER_WEBUI_PORT=9091
+      - SPARK_PUBLIC_DNS=localhost
+      - SPARK_WORKER_CORES=4
+      - SPARK_WORKER_MEMORY=15G
+      - SPARK_DRIVER_MEMORY=2G
+      - SPARK_EXECUTOR_MEMORY=8G
+      - SPARK_WORKLOAD=worker
+      - SPARK_MODE=worker
+      - SPARK_WORKER_PORT=7000
+    volumes:
+       - ./apps:/opt/spark-apps
+       - ./data:/opt/spark-data
+       - ./hudi_test:/opt/hudi_test
+  spark-worker-b:
+    image: spark
+    hostname: spark-worker-b
+    ports:
+      - "9092:9092"
+      - "7001:7000"
+    depends_on:
+      - spark-master
+    deploy:
+      placement:
+        constraints:
+          - node.labels.worker2==true
+    environment:
+      - SPARK_MASTER=spark://spark-master-local:7077
+      - SPARK_LOCAL_HOSTNAME=spark-worker-b
+      - SPARK_PUBLIC_DNS=localhost
+      - SPARK_WORKER_WEBUI_PORT=9092
+      - SPARK_WORKER_CORES=4
+      - SPARK_WORKER_MEMORY=15G
+      - SPARK_DRIVER_MEMORY=2G
+      - SPARK_EXECUTOR_MEMORY=8G
+      - SPARK_WORKLOAD=worker
+      - SPARK_WORKER_PORT=7000
+    volumes:
+        - ./apps:/opt/spark-apps
+        - ./data:/opt/spark-data
+        - ./hudi_test:/opt/hudi_test
+  # minio:
+  #     image: minio
+  #     # command: minio server --console-address ":9001" /data
+  #     # hostname: minio
+  #     environment:
+  #       - MINIO_ROOT_USER=user
+  #       - MINIO_ROOT_PASSWORD=password
+  #       - MINIO_ADDRESS='9000'
+  #       - MINIO_CONSOLE_ADDRESS='9001'
+  #       # - MINIO_BROWSER_REDIRECT_URL=http://server.google.com:9001
+  #       # - MINIO_SERVER_URL=https://$EXTERNAL_URL:9066
+  #     healthcheck:
+  #       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+  #     networks:
+  #       - default
+  #       # - prefect_public
+  #     ports:
+  #       - 9001:9001
+  #       - 9000:9000
+  #     volumes:
+  #       - MINIO_DIR:/data
+  # metastore-database:
+  #   image: postgres:14.1-alpine
+  #   hostname: metastore-database
+  #   environment:
+  #     - POSTGRES_USER=hudimetastore
+  #     - POSTGRES_PASSWORD=hudimetastore
+  #     - POSTGRES_DB=hudi
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - database-volume:/var/lib/postgresql/data
+  mysql-db:
+    image: mysql:8.0.14
+    restart: always
+    hostname: spark-meta-mysql
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+    environment:
+      MYSQL_DATABASE: 'metastore_db'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'user'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'password'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      # <Port exposed> : <MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - my-sqldb1:/var/lib/mysql
+volumes:
+    database-volume:
+    my-sqldb1:
+    # MINIO_DIR:
+networks:
+  spark-cluster_public_2:
+    driver: overlay
+    external: true
+#   spark-livy:
+#     image: $DOCKER_LIVY_IMAGE
+# #    build: ./Livy/
+# #    command: ["sh","-c","/src/livy/apache-livy/bin/livy-server"]
+#     hostname: spark-livy
+#     ports:
+#       - "8998:8998"
+#     depends_on:
+#       - spark-master
+#       - spark-worker-a
+#       - spark-worker-b
+#     # deploy:
+#     #   placement:
+#     #     constraints:
+#     #       - node.labels.worker2==true
+#    environment:
+#      - SPARK_MASTER=spark://spark-master:7077
+#      - SPARK_LOCAL_HOSTNAME=spark-livy
+#      - SPARK_PUBLIC_DNS=beetwo
+#      - SPARK_WORKER_CORES=1
+#      - SPARK_WORKER_MEMORY=1G
+#      - SPARK_DRIVER_MEMORY=1G
+#      - SPARK_EXECUTOR_MEMORY=1G
+#      - SPARK_WORKLOAD=spark-livy
+#  spark-submit:
+#    image: $DOCKER_IMAGE
+#    hostname: spark-submit
+#    ports:
+#      - "9093:8080"
+#      - "7002:7000"
+#    depends_on:
+#      - spark-master
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.worker2==true
+#    environment:
+#      - SPARK_MASTER=spark://spark-master:7077
+#      - SPARK_LOCAL_HOSTNAME=spark-submit
+#      - SPARK_PUBLIC_DNS=beetwo-submit
+#      - SPARK_WORKER_CORES=1
+#      - SPARK_WORKER_MEMORY=1G
+#      - SPARK_DRIVER_MEMORY=1G
+#      - SPARK_EXECUTOR_MEMORY=1G
+#      - SPARK_WORKLOAD=submit
+
+
