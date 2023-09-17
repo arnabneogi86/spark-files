@@ -67,10 +67,10 @@ RUN mkdir -p $SPARK_LOG_DIR && \
 
 COPY start-spark-1.sh /
 
-COPY data/hive-site.xml $SPARK_HOME/conf/
-COPY apps/mysqljar/mysql-connector-java-8.0.14.jar $SPARK_HOME/jars/
-COPY apps/jarfiles/ojdbc8-21.5.0.0.jar $SPARK_HOME/jars/
-COPY apps/jarfiles/hadoop-aws-2.7.4.jar $SPARK_HOME/jars/
-COPY apps/jarfiles/hudi-spark3.3-bundle_2.12-0.12.0.jar $SPARK_HOME/jars/
+COPY apps/hive-site.xml $SPARK_HOME/conf/
+COPY apps/mysql-connector-java-8.0.14.jar $SPARK_HOME/jars/
+COPY apps/ojdbc8-21.5.0.0.jar $SPARK_HOME/jars/
+COPY apps/hadoop-aws-2.7.4.jar $SPARK_HOME/jars/
+#COPY apps/jarfiles/hudi-spark3.3-bundle_2.12-0.12.0.jar $SPARK_HOME/jars/
 
 CMD ["/bin/bash", "/start-spark-1.sh"]
