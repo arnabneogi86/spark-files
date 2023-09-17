@@ -67,7 +67,7 @@ RUN mkdir -p $SPARK_LOG_DIR && \
 
 COPY start-spark-1.sh /
 
-COPY apps/hive-site.xml $SPARK_HOME/conf/
+COPY data/hive-site.xml $SPARK_HOME/conf/
 COPY apps/mysql-connector-java-8.0.14.jar $SPARK_HOME/jars/
 COPY apps/ojdbc8-21.5.0.0.jar $SPARK_HOME/jars/
 COPY apps/hadoop-aws-2.7.4.jar $SPARK_HOME/jars/
