@@ -1,0 +1,55 @@
+<configuration>
+  <!-- Hive Execution Parameters -->
+<property>
+  <name>javax.jdo.option.ConnectionURL</name>
+  <value>jdbc:mysql://spark-meta-mysql:3306/metastore_db?createDatabaseIfNotExist=true&amp;useSSL=FALSE&amp;autoReconnect=true&amp;nullCatalogMeansCurrent=true</value>
+</property>
+<property>
+  <name>javax.jdo.option.ConnectionUserName</name>
+  <value>user</value>
+</property>
+<property>
+  <name>javax.jdo.option.ConnectionPassword</name>
+  <value>password</value>
+</property>
+<property>
+  <name>javax.jdo.option.ConnectionDriverName</name>
+  <value>com.mysql.cj.jdbc.Driver</value>
+</property>
+<!-- <property>
+  <name>hive.server2.transport.mode</name>
+  <value>http</value>
+</property> -->
+<property>
+  <name>hive.server2.thrift.http.port</name>
+  <value>10000</value>
+</property>
+<!-- <property>
+  <name>hive.server2.http.endpoint</name>
+  <value>cliservice</value>
+</property> -->
+
+
+<property>
+<name>hive.metastore.schema.verification</name>
+<value>false</value>
+<description/>
+</property>
+  <property>
+    <name>datanucleus.autoCreateSchema</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>datanucleus.fixedDatastore</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>datanucleus.autoCreateTables</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>datanucleus.schema.autoCreateTables</name>
+    <value>true</value>
+  </property>
+
+</configuration>
