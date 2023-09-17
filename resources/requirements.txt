@@ -1,0 +1,14 @@
+cffi
+pandas
+numpy
+matplotlib
+pyspark
+notebook
+findspark
+thrift
+pyhive
+# pyarrow
+# koalas
+# keras
+# elephas
+
