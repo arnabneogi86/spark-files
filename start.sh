@@ -1,4 +1,4 @@
-#!bin/bash
+
 export IMAGE_NAME=spark-2
 export STACK_NAME=spark-cluster-2
 export VERSION=2.0.1
@@ -29,7 +29,7 @@ docker build -f Dockerfile -t $IMAGE_NAME .
 # docker-compose -f docker-compose-blank.yml up -d
 
 # docker build -f Dockerfile_python -t spark_docker_v1 . 
-# docker build -f Dockerfile_submit -t $IMAGE_NAME_SUBMIT .
+docker build -f Dockerfile_submit -t $IMAGE_NAME_SUBMIT .
 
 docker-compose -f docker-compose.yml up -d 
 docker-compose -f docker-compose-submit.yml up -d 

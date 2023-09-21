@@ -28,8 +28,10 @@ services:
       - "10000:10000"
       - "10001:10001"
       - "9083:9083"
-# networks:
-#   spark-cluster_public:
-#     driver: overlay
-#     external: true
+    networks:
+      - spark-cluster_public_2
+networks:
+  spark-cluster_public_2:
+    driver: overlay
+    external: true
 

@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   spark-master:
-    image: spark
+    image: $IMAGE_NAME
     hostname: spark-master-local
     ports:
       - "9090:8080"
@@ -26,8 +26,10 @@ services:
       - SPARK_MASTER_WEBUI_PORT=8080
       - SPARK_MODE=master
   spark-worker-a:
-    image: spark
+    image: $IMAGE_NAME
     hostname: spark-worker-a
+    networks:
+      - spark-cluster_public_2
     ports:
       - "9091:9091"
       - "7000:7000"
@@ -54,8 +56,10 @@ services:
        - ./data:/opt/spark-data
        - ./hudi_test:/opt/hudi_test
   spark-worker-b:
-    image: spark
+    image: $IMAGE_NAME
     hostname: spark-worker-b
+    networks:
+      - spark-cluster_public_2
     ports:
       - "9092:9092"
       - "7001:7000"
@@ -116,6 +120,8 @@ services:
     image: mysql:8.0.14
     restart: always
     hostname: spark-meta-mysql
+    networks:
+      - spark-cluster_public_2
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE
     environment:
