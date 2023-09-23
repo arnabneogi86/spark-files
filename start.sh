@@ -29,9 +29,11 @@ docker build -f Dockerfile -t $IMAGE_NAME .
 # docker-compose -f docker-compose-blank.yml up -d
 
 # docker build -f Dockerfile_python -t spark_docker_v1 . 
-docker build -f Dockerfile_submit -t $IMAGE_NAME_SUBMIT .
+
 
 docker-compose -f docker-compose.yml up -d 
+docker wait spark-files_mysql-db
+docker build -f Dockerfile_submit_2 -t $IMAGE_NAME_SUBMIT .
 docker-compose -f docker-compose-submit.yml up -d 
 # docker-compose -f docker-compose.yml up -d
 # docker-compose -f docker-compose-minio.yml up -d

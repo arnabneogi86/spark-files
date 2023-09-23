@@ -28,15 +28,15 @@ COPY apps/mysql-connector-java-8.0.14.jar $HIVE_HOME/lib/
 COPY apps/mysql-connector-java-8.0.14.jar $SPARK_HOME/jars/
 
 # RUN $HIVE_HOME/bin/schematool -dbType mysql -initSchema --verbose
-
+RUN $HIVE_HOME/bin/schematool -dbType mysql -initSchema --verbose
 
 ENV PYSPARK_DRIVER_PYTHON='jupyter'
 ENV PYSPARK_DRIVER_PYTHON_OPTS='notebook --no-browser --port=8889 --allow-root --ip=0.0.0.0 --NotebookApp.token='
 # Install libraries
 COPY ./resources/requirements.txt .
 RUN update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
-RUN pip install pyspark
-RUN PYSPARK_RELEASE_MIRROR=http://mirror.apache-kr.org PYSPARK_HADOOP_VERSION=2 pip install pyspark -v
+# RUN PYSPARK_HADOOP_VERSION=2 pip install pyspark==3.3.1 -v
+# RUN PYSPARK_RELEASE_MIRROR=http://mirror.apache-kr.org PYSPARK_HADOOP_VERSION=2 pip install pyspark==3.3.1 -v
 RUN pip install -r requirements.txt
 
 # Copy examples python files into container

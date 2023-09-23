@@ -142,7 +142,7 @@ services:
     volumes:
       - my-sqldb1:/var/lib/mysql
 volumes:
-    database-volume:
+    # database-volume:
     my-sqldb1:
     # MINIO_DIR:
 networks:
